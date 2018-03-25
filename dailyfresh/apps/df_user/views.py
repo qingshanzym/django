@@ -1,3 +1,4 @@
+# 接下来我要把天天生鲜这个项目做成我的旗舰项目，每一句代码我都会进行注释。
 from django.shortcuts import render, redirect
 from django.http import HttpResponse,JsonResponse
 from django.views.generic import View
