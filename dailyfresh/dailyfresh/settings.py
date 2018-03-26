@@ -12,15 +12,17 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-
+# 这个是项目路径。
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 import sys
+# 把apps的路径插入到python查找路径的列表里。
 sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# 用celery_tasks异步发送激活邮件时候的加密方式（密文），也可以自己定义。
 SECRET_KEY = '@k_7%dm=)xik75)7w8xbhid@71y)nzv8+lowf7n)u!mj7q-b0&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -38,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 自己每创建一个应用，都要在这个列表里添加，不然django识别不了。
     'df_user',
 )
 
@@ -57,6 +60,7 @@ ROOT_URLCONF = 'dailyfresh.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        # 模板加载路径。在views模块里写视图函数的时候，如果没有模板文件自动提示，可能问题就是出在模板路径不对这里了。
         'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -79,6 +83,7 @@ WSGI_APPLICATION = 'dailyfresh.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        # 数据库基本配置。很简单。
         'NAME':'daily_fresh',
         'USER':'root',
         'PASSWORD':'mysql',
@@ -91,8 +96,10 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
+# 汉化。
 LANGUAGE_CODE = 'zh-Hans'
 
+# 指定时区。 固定格式。
 TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
@@ -105,13 +112,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
+# 静态文件标识。意思为——碰到这个开头的路径，即说明此文件为静态文件。
 STATIC_URL = '/static/'
+
+# 静态文件加载路径。
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
+# 用户权限配置。如果不配置此项，容易在项目中出现如下BUG：User.user_permissions错误。
 AUTH_USER_MODEL = 'df_user.User'
 
+# 以下是celery异步发送激活邮件的一些常规配置，会用即可，不必记住。
 MAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.163.com'
 EMAIL_PORT = 25
