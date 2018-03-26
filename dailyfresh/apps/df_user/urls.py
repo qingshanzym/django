@@ -7,4 +7,5 @@ urlpatterns = [
     url('^active/(.+)$',active),
     url('^exists$',exists),
     url('^login$',LoginView.as_view()),
+    url('^info$', info)
 ]

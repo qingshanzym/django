@@ -23,6 +23,9 @@ from django.contrib.auth import authenticate,login
 #     处理注册
 #     '''
 #     pass
+
+def info(request):
+    return HttpResponse('欢迎来到用户中心，随后完善。')
 class RegisterView(View):
     def get(self, request):
         return render(request, 'register.html',{'title':'注册'})

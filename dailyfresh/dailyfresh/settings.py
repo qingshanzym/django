@@ -42,6 +42,10 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     # 自己每创建一个应用，都要在这个列表里添加，不然django识别不了。
     'df_user',
+    'df_order',
+    'df_goods',
+    'df_cart',
+    'tinymce',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -133,3 +137,33 @@ EMAIL_HOST_USER = 'qingshanzym@163.com'
 EMAIL_HOST_PASSWORD = '19900522lzh'
 #收件人看到的发件人
 EMAIL_FROM = '天天生鲜<qingshanzym@163.com>'
+
+# # 缓存
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379/5",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         }
+#     }
+# }
+#
+# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+# SESSION_CACHE_ALIAS = "default"
+
+LOGIN_URL = '/user/login'
+
+#指定保存文件的类，在这个类中，可以编写上传文件到Fdfs的代码
+DEFAULT_FILE_STORAGE = 'utils.storage.FdfsStorage'
+#指定fdfs文件服务器读取文件的路径
+FDFS_SERVER='http://127.0.0.1:8888/'
+#指定fdfs配置文件
+FDFS_CLIENT=os.path.join(BASE_DIR,'utils/fdfs_client.conf')
+
+#设置富文本编辑器的样式
+TINYMCE_DEFAULT_CONFIG = {
+  'theme': 'advanced', # 丰富样式
+  'width': 600,
+  'height': 400,
+}

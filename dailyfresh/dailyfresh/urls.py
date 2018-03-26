@@ -18,6 +18,9 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    # 此处要注意，include里面应该直接写（应用名称.urls），而不要加apps。
-    url('^user/', include('df_user.urls'))
+    url('^user/', include('df_user.urls')),
+    url('^', include('df_goods.urls')),
+    url('^cart/', include('df_cart.urls')),
+    url('^order/', include('df_order.urls')),
+    url(r'^tinymce/', include('tinymce.urls')),
 ]
