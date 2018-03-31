@@ -14,10 +14,11 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 # 这个是项目路径。
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+# print(BASE_DIR)
 import sys
 # 把apps的路径插入到python查找路径的列表里。
 sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))
+# print(sys.path)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -46,6 +47,8 @@ INSTALLED_APPS = (
     'df_goods',
     'df_cart',
     'tinymce',
+    'haystack',
+    # 'utils'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -138,19 +141,19 @@ EMAIL_HOST_PASSWORD = '19900522lzh'
 #收件人看到的发件人
 EMAIL_FROM = '天天生鲜<qingshanzym@163.com>'
 
-# # 缓存
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": "redis://127.0.0.1:6379/5",
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-#         }
-#     }
-# }
-#
-# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-# SESSION_CACHE_ALIAS = "default"
+# 缓存
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/5",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 LOGIN_URL = '/user/login'
 
@@ -167,3 +170,20 @@ TINYMCE_DEFAULT_CONFIG = {
   'width': 600,
   'height': 400,
 }
+
+# 指定生成静态文件的路径
+GENERATE_HTML = BASE_DIR + '/static/html'
+
+# 配置搜索引擎后端
+HAYSTACK_CONNECTIONS = {
+  'default': {
+      # 使用whoosh引擎：提示，如果不需要使用jieba框架实现分词，就使用whoosh_backend
+      'ENGINE': 'haystack.backends.whoosh_cn_backend.WhooshEngine',
+      # 索引文件路径
+      'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+  }
+}
+# 当添加、修改、删除数据时，自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 5
