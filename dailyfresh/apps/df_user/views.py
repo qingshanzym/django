@@ -13,7 +13,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django_redis import get_redis_connection
 from utils.views import LoginRequiredViewMixin
-
+import json
 # Create your views here.
 # def register(request):
 #     if request.method=='GET':
@@ -207,6 +207,32 @@ class LoginView(View):
         else:
             response.delete_cookie('uname')
 
+        # 如果登陆成功，则将存在于cookies中的购物车信息，加入到redis中。
+        # 读取cookies中的购物车信息
+        cart_str = request.COOKIES.get('cart')
+        if cart_str:
+            cart_dict = json.loads(cart_str)
+            # 构造键————redis中的。
+            key = 'cart%d' % request.user.id
+            redis_client = get_redis_connection()
+            for k, v in cart_dict.items():
+            # 若redis中有此商品，先读取数据。
+                if redis_client.hexists(key, k):
+                    # redis中存储的商品数量
+                    count1 = int(redis_client.hget(key, k))
+                    # cookies中存储的商品数量
+                    count2 = v
+                    # 计算总数
+                    count0 = count1 + count2
+                    if count0 > 5:
+                        count0 = 5
+                    redis_client.hset(key, k, count0)
+                else:
+                    # 若redis中没有此商品，则直接保存。
+                    redis_client.hset(key, k, v)
+
+            # 删除cookies中的购物车信息
+            response.delete_cookie('cart')
         # 转向用户中心
         return response
 
@@ -281,3 +307,7 @@ class SiteView(LoginRequiredViewMixin, View):
             addr.isDefault = True
         addr.save()
         return redirect('/user/site')
+
+    # 展示base_user.html页面效果
+def base_user(request):
+    return render(request, 'base_user.html')

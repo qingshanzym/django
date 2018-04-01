@@ -13,5 +13,6 @@ urlpatterns = [
     url('^info$', info),
     url('^order$', order),
     url('^area$', area),
-    url('^site$', SiteView.as_view())
+    url('^site$', SiteView.as_view()),
+    url('^base_user$', base_user)
 ]

@@ -54,6 +54,7 @@
             <div class="goods_num clearfix">
                 <div class="num_name fl">数 量：</div>
                 <div class="num_add fl">
+                    <input type="hidden" id="sku_id" value="{{ sku.id }}">
                     <input type="text" class="num_show fl" value="1">
                     <a href="javascript:;" class="add fr">+</a>
                     <a href="javascript:;" class="minus fr">-</a>
@@ -95,6 +96,7 @@
     </div>
 
     <div class="add_jump"></div>
+    {% csrf_token %}
     <script type="text/javascript">
         var $add_x = $('#add_cart').offset().top;
         var $add_y = $('#add_cart').offset().left;
@@ -104,17 +106,37 @@
 
         $(".add_jump").css({'left': $add_y + 80, 'top': $add_x + 10, 'display': 'block'})
         $('#add_cart').click(function () {
-            $(".add_jump").stop().animate({
-                    'left': $to_y + 7,
-                    'top': $to_x + 7
+            //如果是查询数据使用get请求方式
+            //如果是添加、修改、删除等使用post请求方式
+            $.post('/cart/add',
+                {
+                    'sku_id': $('#sku_id').val(),
+                    'count': $('.num_show').val(),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    //满足django的csrf验证。
                 },
-                "fast", function () {
-                    $(".add_jump").fadeOut('fast', function () {
-                        $('#show_count').html(2);
-                    });
+                function (data) {
+                    if (data.status == 1) {
+                        $(".add_jump").css({'left': $add_y + 80, 'top': $add_x + 10, 'display': 'block'});
+                        $(".add_jump").stop().animate({
+                                'left': $to_y + 7,
+                                'top': $to_x + 7
+                            },
+                            "fast", function () {
+                                $(".add_jump").fadeOut('fast', function () {
+                                    $('#show_count').html(data.total_count);
+                                });
 
+                            });
+                    } else if (data.status == 2) {
+                        //商品编号不存在
+                        alert('商品不存在');
+                    } else if (data.status == 3) {
+                        //数量不正确
+                        alert('数量不正确');
+                    }
                 });
-        })
+        });
 
         //改变数量，计算总价
         $('.num_show').blur(function () {
